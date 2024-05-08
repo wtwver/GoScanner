@@ -1,0 +1,47 @@
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Vulnerability</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+  <link href="style.css" rel="stylesheet">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script>
+    $(function () {
+      $("#nav").load("nav.html");
+    });
+
+    function updateNav() {
+      document.getElementById("advance").classList.add("active");
+      document.getElementById("advance").setAttribute("aria-current", "page");
+    }
+  </script>
+</head>
+
+<body>
+  <header>
+    <div class="container-fluid bg-white">
+      <img src="asset/logo.png" id="logo" alt="apiScanf logo">
+      <button type="button" class="btn float-end purple">Logout</button>
+    </div>
+  </header>
+
+  <div id="nav"></div>
+
+  <script>document.getElementById("frame1").src = window.location.origin + "8888"</script>
+  <div id="body" class="container-fluid">
+    <!-- <iframe src="http://206.189.88.45:8888/" class="w-100 h-50"></iframe> -->
+    <iframe id=frame1 src="http://206.189.88.45:8888/" class="w-100 h-50"></iframe>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0"
+    crossorigin="anonymous"></script>
+</body>
+
+</html>

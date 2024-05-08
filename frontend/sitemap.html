@@ -1,0 +1,348 @@
+<!-- removed -->
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>Sitemap</title>
+        
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+        <link href="style.css" rel="stylesheet">
+
+        <style>
+          .output {
+            height: 300px;
+          }
+
+          .seeds {
+            height: 44px;
+          }
+        </style>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="cookie.js"></script>
+        <script>
+          var expected = 0;
+          var timer;
+          function handleFormSubmit(event) {
+              event.preventDefault();
+              expected = 0;
+
+              var obj = "{"
+              for (var i = 0; i < event.target.length; i++) {
+                if (i == 0) {
+                  if (fileUpload == false) {
+                    obj += '"' + event.target[i].id + '":';
+
+                    if (fieldNum == 1) {
+                      obj += '["' + event.target[i].value + '"]';
+                    } else {
+                      obj += "[";
+
+                      for (var j = 0; j < fieldNum; j++) {
+                        obj += '"' +  event.target[i].value + '"';
+
+                        if (j != fieldNum - 1) {
+                          obj += ",";
+                        }
+                      }
+
+                      obj += "]";
+                    }
+
+                    obj += ",";
+                  } else {
+                    if (array == "[]") {
+                      return;
+                    }
+
+                    obj += '"' + event.target[i].id + '":' + array + ",";
+                  }
+
+                  i += fieldNum + 4;
+                } else {
+                  if (event.target[i].value == "" && i + 1 < event.target.length) {
+                    var checked = false;
+
+                    for (var j = i + 1; j < event.target.length && event.target[j].value != ""; j++) {
+                      if (event.target[j].checked == true) {
+                        checked = true;
+                        expected += 1;
+                        break;
+                      }
+                    }
+
+                    if (checked == true) {
+                      obj += '"' + event.target[i].id + '":[';
+
+                      while (i + 1 < event.target.length && event.target[i + 1].name != "") {
+                        i += 1;
+
+                        if (event.target[i].name != "") {
+                          if (event.target[i].name == "all" && event.target[i].checked == true) {
+                            while (i + 1 < event.target.length && event.target[i + 1].name != "") {
+                              i += 1;
+
+                              obj += '"' + event.target[i].name + '",';
+                            }
+                          } else if (event.target[i].checked == true) {
+                            obj += '"' + event.target[i].name + '",';
+                          }
+
+                          if (i + 1 == event.target.length || event.target[i + 1].name == "") {
+                            obj = obj.substring(0, obj.length - 1) + "],";
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+
+              if (obj[obj.length - 1] == ",") {
+                obj = obj.substring(0, obj.length - 1);
+              }
+
+              obj += "}";
+              console.log(obj);
+              // console.log(expected);
+
+              if (expected == 0) {
+                // console.log("no tools selected");
+                return;
+              }
+
+              $.ajax({
+                  type: "POST",
+                  url: "/api/commandHandler",
+                  dataType: "json",
+                  data: obj,
+              })
+              .done(function(data) {
+                var html = "";
+                var now = 0;
+
+                $.each(data, function (index, value) {
+                  if (getCookie(index) == null) {
+                    setCookie(index, value);
+                  } else {
+                    setCookie(index, getCookie(index) + "," + value);
+                  }
+
+                  if ((now % 2) == 0) {
+                    html += "<div class='row w-100'>";
+                  }
+
+                  html += "<div class='col-6'><div><span>" + index + "</span><span class='float-end'>Task ID: <span id='ID" + now + "'>" + value + "</span></span></div><div class='row'><pre id='output" + now + "' class='border fs-6 bg-light text-secondary overflow-auto output'></pre></div></div>";
+
+                  if ((now % 2) == 1 || now == expected) {
+                    html += "</div>";
+                  }
+
+                  now += 1;
+                });
+
+                document.getElementById("outputBody").innerHTML = html;
+
+                refresh();
+              });
+          }
+
+          var refreshing = false;
+          async function refresh() {
+            if (refreshing != true) {
+              refreshing = true;
+              var now = 0;
+
+              for (var i = 0; i < expected; i++) {
+                now += await getTasks(i);
+              }
+                
+              if (now != expected && expected != -1) {
+                timer = setTimeout(refresh, 5000);
+              }
+
+              refreshing = false;
+            }
+          }
+
+          function stopRefresh() {
+            clearTimeout(timer);
+          }
+
+          function getTasks(index) {
+            return new Promise(resolve => {
+              if (document.getElementById("output" + index).innerHTML == "") {
+                $.getJSON("/api/getTasks/" + document.getElementById("ID" + index).innerHTML, function foo(result) {
+                  document.getElementById("output" + index).innerHTML = result.message;
+
+                  if (result.message != "") {
+                    resolve(1);
+                  } else {
+                    resolve(0);
+                  }
+                })
+              } else {
+                resolve(1);
+              }
+            })
+          }
+
+          // get tools list and parse into radio
+          var jsonRequestUrl = '/api/getTools';
+
+          $.getJSON(jsonRequestUrl, function foo(result) {
+              // console.log(result);
+              var html = "";
+
+              $.each(result, function (index, value) {
+                  html += '<div class="col-3"><div class="btn-group w-100" role="group"><button id="' + index + '" type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">' + index + '</button><ul class="dropdown-menu p-0 w-100" aria-labelledby="' + index + '"><li><input type="checkbox" class="btn-check" id="' + index + 'all" name="all" autocomplete="off"><label class="btn btn-outline-secondary w-100" for="' + index + 'all">All</label></li>';
+                  for (key in value) {
+                      html += '<li><input type="checkbox" class="btn-check" id="' + index + value[key] + '" name="' + value[key] + '" autocomplete="off"><label class="btn btn-outline-secondary w-100" for="' + index + value[key] + '">' + value[key] + '</label></li>';
+                  }
+
+                  html += '</ul></div></div>';
+              });
+
+              $('#tools').append(html);
+          });
+
+          $(function(){
+            $("#nav").load("nav.html"); 
+          });
+
+          function updateNav() {
+            document.getElementById("sitemap").classList.add("active");
+            document.getElementById("sitemap").setAttribute("aria-current", "page");
+          }
+
+          var fieldNum = 1;
+          function handleIncreaseField() {
+            event.preventDefault();
+
+            document.getElementById("urlField").innerHTML = document.getElementById("urlField").innerHTML + '<input type="text" class="form-control seeds" placeholder="place the URL here" value="demo.testfire.net" required>';
+            fieldNum++;
+          }
+
+          function handleDecreaseField() {
+            if (event != undefined) {
+              event.preventDefault();
+            }
+
+            var list = document.getElementsByClassName("seeds");
+            if (list.length != 1) {
+              document.getElementById("urlField").removeChild(list[list.length - 1]);
+              fieldNum--;
+            }
+          }
+
+          var array = "";
+          var fileUpload = false;
+          function handleFileUpload(input) {
+            var file = input.files[0];
+
+            if (file.type != "text/plain") {
+              alert("Please upload only .txt file!");
+              fileUpload = false;
+              return;
+            } else {
+              fileUpload = true;
+            }
+
+            var reader = new FileReader();
+            reader.readAsText(file);
+
+            reader.onload = function() {
+              var inputFields = document.getElementsByClassName("seeds");
+
+              for (var j = 0; j < inputFields.length - 1; j++) {
+                handleDecreaseField();
+              }
+
+              inputFields[0].setAttribute("disabled", true);
+              inputFields[0].value = file.name + " has been chosen successfully";
+
+              // console.log(reader.result);
+              var urls = reader.result.split("\n");
+              array = "[";
+
+              for (var i = 0; i < urls.length; i++) {
+                if (urls[i].trim() != "") {
+                  array += '"' + urls[i].trim() + '"';
+                  if (i != urls.length - 1) {
+                    array += ",";
+                  }
+                }
+              }
+
+              array += "]";
+              console.log(array);
+            };
+          }
+      </script>
+    </head>
+    <body>
+      <header>
+        <div class="container-fluid bg-white">
+            <img src="asset/logo.png" id="logo" alt="apiScanf logo">
+            <button type="button" class="btn float-end purple">Logout</button>
+        </div>
+      </header>
+
+      <div id="nav"></div>
+
+        <div class="container-fluid">
+            <div class="row justify-content-center pt-5 pb-5 fs-5">
+              <div class="col-11 bg-white rounded shadow pt-3 ps-4 pe-4 pb-3" style="z-index: 1;">
+                <form class="mb-0" onsubmit="handleFormSubmit(event)">
+                  <div class="d-flex">
+                    <div class="input-group">
+                      <label for="urlSeed" class="col-form-label">URL seed:&nbsp;</label>
+
+                      <div id="urlField" class="col flex-grow">
+                        <input type="text" id="urlSeed" class="form-control seeds" placeholder="place the URL here" value="demo.testfire.net" required>
+                      </div>
+
+                      <button class="btn border purple" type="submit">Generate</button>
+                      <button type="button" class="btn border purple dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span class="visually-hidden">Toggle Dropdown</span>
+                      </button>
+
+                      <ul class="dropdown-menu dropdown-menu-end p-0">
+                        <li>
+                          <label for="uploadButton" class="btn border purple w-100">Upload</label>
+                          <input id="uploadButton" type="file" accept=".txt" onchange="handleFileUpload(this)" hidden>
+                        </li>
+
+                        <li><button class="btn border purple w-100" onclick="handleIncreaseField()">Fields +</button></li>
+                        
+                        <li><button class="btn border purple w-100" onclick="handleDecreaseField()">Fields -</button></li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  <div id="tools" class="d-flex pt-3">
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            <div class="row justify-content-center pb-5">
+              <div class="col-11 bg-white rounded shadow p-4 fs-4">
+                <div>
+                  <div class="pb-3">
+                    <span>Output:&nbsp;</span>
+                    
+                    <button type="button" class="btn float-end text-danger" onclick="stopRefresh()">Stop Refresh</button>
+                    <button type="button" class="btn float-end text-primary" onclick="refresh()">Refresh</button>
+                  </div>
+
+                  <div id="outputBody" class="fs-5 ps-2 pe-2"></div>
+                </div>
+              </div>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+    </body>
+</html>

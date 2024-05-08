@@ -1,0 +1,264 @@
+<html>
+    <head>
+        <title>Front End</title>
+        <style>
+            #logo, #navigation {
+                width: 100%;
+            }
+
+            .inline-block {
+                display: inline-block;
+            }
+
+            .whiteBackground {
+                background-color: white;
+            }
+
+            #banner {
+                height: 45px;
+            }
+
+            #logoFrame {
+                width: 200px;
+            }
+
+            #frontEnd {
+                font-size: 20px;
+                font-family: "Arial";
+            }
+
+            #logout {
+                color: #a877c8;
+                float:right;
+                margin:20px 15px 10px 0;
+            }
+
+            #navigation {
+                display: table;
+                height: 41px;
+            }
+
+            .option {
+                width: 20%;
+                display: table-cell;
+                padding: 10px 0;
+            }
+
+            .white {
+                color: #ffffff;
+            }
+
+            .big{
+                font-size: 40px;
+            }
+
+            .chosen, #main {
+                background-color: #b37fd5;
+            }
+
+            .notChosen {
+                background-color: #a877c8;
+            }
+
+            #main {
+                height: calc(100vh - 110px);
+            }
+
+            .frame, #progress {
+                border-radius: 15px;
+                filter: drop-shadow(0px 5px 2px rgba(0,0,0,0.4));
+            }
+
+            .frame {
+                width: 380px;
+                height: 115px;
+                line-height: 115px;
+            }
+
+            #endpointFrame {
+                background-color: #a2b2df;
+                margin-left: 100px;
+            }
+
+            #folderFrame {
+                background-color: #e4c782;
+                margin: 0 max(0px, calc(100vw/2 - 692px));
+            }
+
+            #vulnerabilityFrame {
+                background-color: #8ab257;
+            }
+
+            #header {
+                padding-top: 50px;
+                padding-bottom: 30px;
+            }
+
+            #progress {
+                height: calc(100vh - 375px);
+                margin: 0 100px;
+                padding-top: 40px;
+            }
+
+            #title {
+                color: #9166ad;
+                padding: 0 0 40px 40px;
+            }
+
+            .center {
+                text-align: center;
+            }
+
+            .middle {
+                vertical-align: middle;
+            }
+
+            .chartFuzz {
+                border: 5.5px solid #a2b2df;
+                color: #a2b2df;
+            }
+
+            .chartCrawl {
+                border: 5.5px solid #9065ac;
+                color: #9065ac;
+
+            }
+
+            .circle {
+                width: 220px;
+                height: 230px;
+                border-radius: 50%;
+                vertical-align: middle;
+                display: table-cell;
+                text-align: center;
+            }
+
+            .seperator {
+                height: 500px;
+                width: 2px;
+                background-color: rgba(162,178,223,0.7490196078431373);
+            }
+
+            #chartFrame {
+                padding-top: calc(100vh / 4 - 220px);
+            }
+
+            .circleGroupLeft {
+                padding-right: 75px;
+            }
+
+            .circleGroup {
+                padding: 0 75px;
+            }
+            
+            .circleGroupRight {
+                padding-left: 75px;
+            }
+
+            .circleSeperator {
+                padding-top: 50px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="frontEnd">
+            <div id="banner">
+                <div id="logoFrame" class="inline-block whiteBackground">
+                    <img src="asset/logo.png" id="logo" alt="apiScanf logo">
+                </div>
+                <div id="logout">Logout</div>
+            </div>
+            <div id="navigation">
+                <div id="dashboard" class="chosen option white inline-block center">Dashboard</div>
+                <div id="projects" class="notChosen option white inline-block center">Projects</div>
+                <div id="sitemap" class="notChosen option white inline-block center">Sitemap</div>
+                <div id="vulnerability" class="notChosen option white inline-block center">Vulnerability</div>
+                <div id="settings" class="notChosen option white inline-block center">Settings</div>
+            </div>
+            <div id="main">
+                <div id="header">
+                    <div id="endpointFrame" class="white big inline-block frame center">
+                        <div id="endpointNum" class="inline-block">100</div>
+                        <div id="endpoints" class="inline-block">Endpoints</div>
+                    </div>
+                    <div id="folderFrame" class="white big inline-block frame center">
+                        <div id="folderNum" class="inline-block">71</div>
+                        <div id="folders" class="inline-block">Folders</div>
+                    </div>
+                    <div id="vulnerabilityFrame" class="white big inline-block frame center">
+                        <div id="vulnerabilityNum" class="inline-block">12</div>
+                        <div id="vulnerabilities" class="inline-block">Vulnerabilities</div>
+                    </div>
+                </div>
+
+                <div id="progress" class="whiteBackground">
+                    <div id="title">Task Execution Progress</div>
+
+                    <div id="chartFrame" class="center whiteBackground">
+                        <div id="chart1" class="inline-block middle circleGroupLeft">
+                            <div class="chartFuzz circle">
+                                <div>Fuzzing</div>
+                                <div id="chart1FuzzPercent" class="big">50%</div>
+                                <div id="chart1FuzzURL">juice-shop.com</div>
+                            </div>
+                            <div class="circleSeperator"></div>
+                            <div class="chartCrawl circle">
+                                <div>Crawling</div>
+                                <div id="chart1CrawlPercent" class="big">100%</div>
+                                <div id="chart1CrawlURL">juice-shop.com</div>
+                            </div>
+                        </div>
+
+                        <div class="seperator inline-block middle"></div>
+
+                        <div id="chart2" class="inline-block middle circleGroup">
+                            <div class="chartFuzz circle">
+                                <div>Fuzzing</div>
+                                <div id="chart2FuzzPercent" class="big">50%</div>
+                                <div id="chart2FuzzURL">juice-shop.com</div>
+                            </div>
+                            <div class="circleSeperator"></div>
+                            <div class="chartCrawl circle">
+                                <div>Crawling</div>
+                                <div id="chart2CrawlPercent" class="big">100%</div>
+                                <div id="chart2CrawlURL">juice-shop.com</div>
+                            </div>
+                        </div>
+
+                        <div class="seperator inline-block middle"></div>
+
+                        <div id="chart3" class="inline-block middle circleGroup">
+                            <div class="chartFuzz circle">
+                                <div>Fuzzing</div>
+                                <div id="chart3FuzzPercent" class="big">50%</div>
+                                <div id="chart3FuzzURL">juice-shop.com</div>
+                            </div>
+                            <div class="circleSeperator"></div>
+                            <div class="chartCrawl circle">
+                                <div>Crawling</div>
+                                <div id="chart3CrawlPercent" class="big">100%</div>
+                                <div id="chart3CrawlURL">juice-shop.com</div>
+                            </div>
+                        </div>
+
+                        <div class="seperator inline-block middle"></div>
+
+                        <div id="chart4" class="inline-block middle circleGroupRight">
+                            <div class="chartFuzz circle">
+                                <div>Fuzzing</div>
+                                <div id="chart4FuzzPercent" class="big">50%</div>
+                                <div id="chart4FuzzURL">juice-shop.com</div>
+                            </div>
+                            <div class="circleSeperator"></div>
+                            <div class="chartCrawl circle">
+                                <div>Crawling</div>
+                                <div id="chart4CrawlPercent" class="big">100%</div>
+                                <div id="chart4CrawlURL">juice-shop.com</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script>
+var jsonRequestUrl = 'http://127.0.0.1/api/getTools';
+
+$.getJSON(jsonRequestUrl, function foo(result) {
+	console.log(result)    
+
+    $.each(result, function (index, value) {
+        console.log("index: ",typeof(index)  );
+        $('#tools').append("<div class=\"tool\"><p class=\"header\">" + index + "</p><div>");
+
+	    for (key in value){
+	    	// console.log(value[key])
+            $('#tools').append("<input type=\"radio\" name=\"" + index + "\" id=\" " + value[key] + "\" value=\""+ value[key] + " \" > <label for="+ value[key] +"> " +  value[key] + "</label>"  );
+        }
+        $('#tools').append("</div>");
+    });
+        
+});
+
+</script>
+
+<h1>hihi</h1>
+<div id="tools"></div>
+
+</html>

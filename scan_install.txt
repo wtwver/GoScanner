@@ -1,0 +1,30 @@
+token leakage scanner:
+
+snallygaster -> no result
+
+git clone --depth 1 https://github.com/hannob/snallygaster
+cd snallygaster
+sudo python3 setup.py install  
+snallygaster demo.testfire.net
+
+
+GitDorker
+// each token 30req/ min
+
+git clone --depth 1 https://github.com/obheda12/GitDorker
+python3 GitDorker.py -tf TOKENSFILE -q tesla.com -d dorks/alldorksv3 -o tesla
+
+
+
+SecretFinder
+git clone --depth 1 https://github.com/m4ll0k/SecretFinder.git 
+pip3 install -r requirements.txt
+python3 SecretFinder.py -i https://juiceshop321.herokuapp.com -e -o cli
+
+
+byp4xx
+
+git clone https://github.com/lobuhi/byp4xx.git
+cd byp4xx
+chmod u+x byp4xx.sh
+./byp4xx.sh $target

@@ -1,0 +1,103 @@
+<html>
+    <head>
+        <title>Front End</title>
+        <style>
+            #tools {
+                display: table;
+                width: 50%;
+                margin-right: 100px;
+            }
+
+            .tool {
+                display: table-cell;
+            }
+
+            .header {
+                margin-left: 30px;
+                margin-bottom: 10px;
+            }
+
+            .header, #outputHeader {
+                font-weight: bold;
+            }
+
+            body {
+                margin: 20px;
+            }
+            div {
+                word-wrap: normal;
+            }
+        </style>
+        
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script>
+            function handleFormSubmit(event) {
+                event.preventDefault();
+
+                var obj = JSON.stringify(Object.fromEntries(new FormData(event.target).entries()));
+
+                $.ajax({
+                    type: "POST",
+                    url: "http://127.0.0.1/api/commandHandler",
+                    dataType: "json",
+                    data: obj,
+                    contentType : "application/json",
+                })
+                .done(function(data) { document.getElementById("taskid").innerHTML = JSON.stringify(data.message); });
+            }
+            var jsonRequestUrl = 'http://127.0.0.1/api/getTools';
+
+            function refresh() {
+                // fetch("http://127.0.0.1/api/getTasks"+id).then(function () {      })
+                
+                id = document.getElementById("taskid").innerHTML
+                $.getJSON("http://127.0.0.1/api/getTasks/" + id, function foo(result) {
+                    console.log(result);
+                    document.getElementById("outputBody").innerHTML = JSON.stringify(result);
+                })
+            }
+
+            // get tools list and parse into radio
+            $.getJSON(jsonRequestUrl, function foo(result) {
+                console.log(result);
+                var html = "";
+                $.each(result, function (index, value) {
+                    console.log("index: ", typeof (index));
+                    html += "<div class=\"tool\"><p class=\"header\">" + index + "</p><div>";
+
+                    for (key in value) {
+                        // console.log(value[key])
+                        html+= "<input type=\"radio\" name=\"" + index + "\" id=\"" + value[key] + "\" value=\"" + value[key] + "\" > <label for=" + value[key] + "> " + value[key] + "</label><br>";
+                    }
+                    html+="</div></div>" ;
+                });
+                $('#tools').append(html)
+            });
+
+
+        </script>
+    </head>
+    <body>
+        <form id="inputForm" onsubmit="handleFormSubmit(event)">
+            <div id="url">
+                <label for="urlSeed">URL seed</label>
+                <input name="urlSeed" id="urlSeed" value="demo.testfire.net" required>
+            </div>
+            <br>
+
+            <div id="tools">           
+            </div>
+            <br>
+
+            <input type="submit" value="Generate">
+        </form>
+
+        <div id="outputGroup">
+            <p id="outputHeader">TaskID</p>
+            <pre id="taskid"></pre>
+            <button type="button" onclick=refresh()>Refresh</button>
+            <p id="outputHeader">Output</p>
+            <pre id="outputBody"></pre>
+        </div>
+    </body>
+</html>

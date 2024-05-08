@@ -1,0 +1,190 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>Dashboard</title>
+        
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+        <link href="style.css" rel="stylesheet">
+
+        <style>
+            #endpointFrame {
+                background-color: #a2b2df;
+                height: 105px;
+            }
+
+            #folderFrame {
+                background-color: #e4c782;
+                height: 105px;
+            }
+
+            #vulnerabilityFrame {
+                background-color: #8ab257;
+                height: 105px;
+            }
+
+            .rounded-circle {
+                margin: 0 calc(5%);
+                min-width: 200px;
+                max-width: 300px;
+            }
+
+            .fuzz {
+                color: #a2b2df;
+                border-color: #a2b2df !important;
+                margin-bottom: 50px;
+            }
+
+            .crawl {
+                color: #9065ac;
+                border-color: #9065ac !important;
+            }
+
+            @media only screen and (max-width: 1400px) {
+                .crawl {
+                    margin-bottom: 50px;
+                }
+            }
+        </style>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script>
+            function changeCircle() {
+                var circles = document.getElementsByClassName("rounded-circle");
+
+                for(var i = 0; i < circles.length; i++){
+                    circles[i].style.height = circles[i].clientWidth;
+                }
+            }
+
+            $(function(){
+                $("#nav").load("nav.html"); 
+            });
+
+            function updateNav() {
+                document.getElementById("dashboard").classList.add("active");
+                document.getElementById("dashboard").setAttribute("aria-current", "page");
+            }
+        </script>
+    </head>
+    <body onload="changeCircle()" onresize="changeCircle()">
+        <header>
+            <div class="container-fluid bg-white">
+                <img src="asset/logo.png" id="logo" alt="apiScanf logo">
+                <button type="button" class="btn float-end purple">Logout</button>
+            </div>
+        </header>
+
+        <div id="nav"></div>
+
+        <div class="container-fluid">
+            <div class="row justify-content-evenly text-center text-white pt-5 pb-5 fs-1">
+                <div id="endpointFrame" class="col-7 col-sm-6 col-md-5 col-lg-4 col-xxl-3 rounded pt-4 shadow">
+                    <span id="endpointNum">100</span>
+                    <span>Endpoints</span>
+                </div>
+
+                <div class="w-100 d-block d-xxl-none"></div>
+
+                <div id="folderFrame" class="col-7 col-sm-6 col-md-5 col-lg-4 col-xxl-3 rounded pt-4 shadow">
+                    <span id="folderNum">71</span>
+                    <span>Folders</span>
+                </div>
+
+                <div class="w-100 d-block d-xxl-none"></div>
+
+                <div id="vulnerabilityFrame" class="col-7 col-sm-6 col-md-5 col-lg-4 col-xxl-3 rounded pt-4 shadow">
+                    <span id="vulnerabilityNum">12</span>
+                    <span>Vulnerabilities</span>
+                </div>
+            </div>
+
+            <div class="row justify-content-center pb-5">
+                <div class="col-11 rounded bg-white pb-5 shadow">
+                    <div class="row pt-5 ps-5 pb-1">
+                        <div class="purple fs-5">Task Execution Progress</div>
+                    </div>
+
+                    <div class="row text-center justify-content-center pt-5">
+                        <div class="col-7 col-sm-6 col-md-5 col-lg-4 col-xxl-3 border-end">
+                            <div class="row border border-5 rounded-circle align-items-center mx-auto text-break fuzz fs-4">
+                                <div>
+                                    <div>Fuzzing</div>
+                                    <div id="chart1FuzzPercent" class="fs-1">50%</div>
+                                    <div id="chart1FuzzURL">juice-shop.com</div>
+                                </div>
+                            </div>
+
+                            <div class="row border border-5 rounded-circle align-items-center mx-auto text-break crawl fs-4">
+                                <div>
+                                    <div>Crawling</div>
+                                    <div id="chart1CrawlPercent" class="fs-1">100%</div>
+                                    <div id="chart1CrawlURL">juice-shop.com</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-7 col-sm-6 col-md-5 col-lg-4 col-xxl-3 border-end">
+                            <div class="row border border-5 rounded-circle align-items-center mx-auto text-break fuzz fs-4">
+                                <div>
+                                    <div>Fuzzing</div>
+                                    <div id="chart2FuzzPercent" class="fs-1">50%</div>
+                                    <div id="chart2FuzzURL">juice-shop.com</div>
+                                </div>
+                            </div>
+
+                            <div class="row border border-5 rounded-circle align-items-center mx-auto text-break crawl fs-4">
+                                <div>
+                                    <div>Crawling</div>
+                                    <div id="chart2CrawlPercent" class="fs-1">100%</div>
+                                    <div id="chart2CrawlURL">juice-shop.com</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="w-100 d-block d-xxl-none"></div>
+
+                        <div class="col-7 col-sm-6 col-md-5 col-lg-4 col-xxl-3 border-end">
+                            <div class="row border border-5 rounded-circle align-items-center mx-auto text-break fuzz fs-4">
+                                <div>
+                                    <div>Fuzzing</div>
+                                    <div id="chart3FuzzPercent" class="fs-1">50%</div>
+                                    <div id="chart3FuzzURL">juice-shop.com</div>
+                                </div>
+                            </div>
+
+                            <div class="row border border-5 rounded-circle align-items-center mx-auto text-break crawl fs-4">
+                                <div>
+                                    <div>Crawling</div>
+                                    <div id="chart3CrawlPercent" class="fs-1">100%</div>
+                                    <div id="chart3CrawlURL">juice-shop.com</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-7 col-sm-6 col-md-5 col-lg-4 col-xxl-3 border-end">
+                            <div class="row border border-5 rounded-circle align-items-center mx-auto text-break fuzz fs-4">
+                                <div>
+                                    <div>Fuzzing</div>
+                                    <div id="chart4FuzzPercent" class="fs-1">50%</div>
+                                    <div id="chart4FuzzURL">juice-shop.com</div>
+                                </div>
+                            </div>
+
+                            <div class="row border border-5 rounded-circle align-items-center mx-auto text-break crawl fs-4">
+                                <div>
+                                    <div>Crawling</div>
+                                    <div id="chart4CrawlPercent" class="fs-1">100%</div>
+                                    <div id="chart4CrawlURL">juice-shop.com</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+    </body>
+</html>

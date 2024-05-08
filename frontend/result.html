@@ -1,0 +1,138 @@
+<html>
+  <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+
+      <title>Result</title>
+      
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+      <link href="style.css" rel="stylesheet">
+
+      <style>
+        .output {
+          height: 300px;
+        }
+      </style>
+
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+      <script src="cookie.js"></script>
+      <script src="ansi_up.js" type="text/javascript"></script>
+      <script>
+        var scanID = document.location.href.split("scanID=").pop();
+        var expected = 0;
+        var timer;
+
+        var refreshing = false;
+        async function refresh() {
+          if (refreshing != true) {
+            refreshing = true;
+            var now = 0;
+
+            for (var i = 0; i < expected; i++) {
+              now += await getTasks(i);
+            }
+              
+            if (now != expected) {
+              timer = setTimeout(refresh, 5000);
+            }
+
+            refreshing = false;
+          }
+        }
+
+        function stopRefresh() {
+          clearTimeout(timer);
+        }
+
+        function getTasks(index) {
+          return new Promise(resolve => {
+            if (!document.getElementById("output" + index).innerHTML.includes("This is the last line")) {
+              $.getJSON("/api/getTasks/" + document.getElementById("ID" + index).innerHTML, function foo(result) {
+                var ansi_up = new AnsiUp;
+                var html = ansi_up.ansi_to_html(result.message);
+                
+                document.getElementById("output" + index).innerHTML = html;
+
+                if (html.includes("This is the last line")) {
+                  resolve(1);
+                } else {
+                  resolve(0);
+                }
+              })
+            } else {
+              resolve(1);
+            }
+          })
+        }
+
+        // $(function(){
+        //   $("#nav").load("nav.html"); 
+        // });
+
+        function updateNav() {
+          document.getElementById("sitemap").classList.add("active");
+          document.getElementById("sitemap").setAttribute("aria-current", "page");
+        }
+
+        function updateInfo() {
+          $.ajax({
+            type: "GET",
+            url: "/api/getTasksId/" + scanID,
+          })
+          .done(function(data) {
+            var html = "";
+            var now = 0;
+
+            expected = data["message"].length;
+
+            for (var i = 0; i < expected; i++) {
+              if ((now % 2) == 0) {
+                html += "<div class='row w-100'>";
+              }
+
+              html += "<div class='col-6'><div><span class='float-end'>Task ID: <span id='ID" + now + "'>" + data["message"][i] + "</span></span></div><br><div class='row'><pre id='output" + now + "' class='border fs-6 bg-light text-secondary overflow-auto output'></pre></div></div>";
+
+              if ((now % 2) == 1 || now == expected) {
+                html += "</div>";
+              }
+
+              now += 1;
+            }
+
+            document.getElementById("outputBody").innerHTML = html;
+
+            refresh();
+          });
+        }
+    </script>
+  </head>
+  <body onload="updateInfo()">
+    <header>
+      <div class="container-fluid bg-white">
+        <img src="asset/logo.png" id="logo" alt="apiScanf logo" onclick="window.location.replace('projects.html')">
+          <!-- <button type="button" class="btn float-end purple">Logout</button> -->
+      </div>
+    </header>
+
+    <div id="nav"></div>
+
+      <div class="container-fluid">
+          <div class="row justify-content-center pt-5 pb-5">
+            <div class="col-11 bg-white rounded shadow p-4 fs-4">
+              <div>
+                <div class="pb-3">
+                  <span>Output:&nbsp;</span>
+                  
+                  <button type="button" class="btn float-end text-danger" onclick="stopRefresh()">Stop Refresh</button>
+                  <button type="button" class="btn float-end text-primary" onclick="refresh()">Refresh</button>
+                </div>
+
+                <div id="outputBody" class="fs-5 ps-2 pe-2"></div>
+              </div>
+            </div>
+          </div>
+      </div>
+
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+  </body>
+</html>

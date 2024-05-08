@@ -1,0 +1,166 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Projects</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <link href="style.css" rel="stylesheet">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="cookie.js"></script>
+    <script>
+      // $(function(){
+      //   $("#nav").load("nav.html"); 
+      // });
+
+      function updateNav() {
+        document.getElementById("projects").classList.add("active");
+        document.getElementById("projects").setAttribute("aria-current", "page");
+      }
+
+      var unit = "day";
+      function handleFormSubmit() {
+        var form = document.getElementById("myForm");
+
+        var projID = "";
+        do {
+          projID = Math.floor(Math.random() * 10000).toString();
+          while (projID.length < 4) {
+            projID = "0" + projID;
+          }
+        }
+        while (getCookie(projID) != null);
+
+        document.getElementById("projID").value = projID;
+
+        var duration = document.getElementById("duration");
+        var name = document.getElementById("name");
+        if (duration.value != "") {
+          var expire = 0;
+
+          switch (unit) {
+            case "day":
+              expire = Date.parse(new Date().setDate(new Date().getDay() + duration.value));
+              break;
+            case "month":
+              expire = Date.parse(new Date().setMonth(new Date().getMonth() + duration.value));
+              break;
+            case "year":
+              expire = Date.parse(new Date().setFullYear(new Date().getFullYear() + duration.value));
+              break;
+          }
+
+          setCookie(projID, name.value + ",0," + expire + ";path=/");
+        } else {
+          setCookie(projID, name.value + ",0;path=/");
+        }
+
+        var projectList = document.getElementById("projectList");
+        projectList.innerHTML = projectList.innerHTML + '<a href="project.html?projID=' + projID + '" class="list-group-item list-group-item-action">' + name.value + '</a>';
+
+        form.submit();
+        form.reset();
+        unit = "day";
+        duration.value = "";
+        name.value = "New Project";
+      }
+
+      function updateInfo() {
+        var cookies = document.cookie.split(";");
+        var projectList = document.getElementById("projectList");
+
+        if (cookies[0] != "") {
+          for (var i = 0; i < cookies.length; i++) {
+            var ID = unescape(cookies[i]).split("=")[0].trim();
+            var name = getCookie(ID).split(",")[0];
+
+            projectList.innerHTML = projectList.innerHTML + '<a href="project.html?projID=' + ID + '" class="list-group-item list-group-item-action">' + name + '</a>';
+          }
+        }
+      }
+    </script>
+  </head>
+
+  <body onload="updateInfo()">
+    <header>
+      <div class="container-fluid bg-white">
+        <img src="asset/logo.png" id="logo" alt="apiScanf logo" onclick="window.location.replace('projects.html')">
+        <!-- <button type="button" class="btn float-end purple">Logout</button> -->
+      </div>
+    </header>
+
+    <div id="nav"></div>
+
+    <div id="body" class="container-fluid">
+      <div class="row justify-content-center pt-5 pb-5">
+        <div class="col-11 bg-white rounded p-4 fs-4">
+          <div class="mb-5">
+            <button type="button" class="btn border purple float-end" data-bs-toggle="modal" data-bs-target="#exampleModal">
+              New Project
+            </button>
+          </div>
+            
+          <hr>
+
+          <div class="modal fade" id="exampleModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Create new project</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body fs-6">
+                  <div>
+                    <label for="name">Project Name:</label><br>
+                    <input id="name" class="w-100" type="text" value="New Project" required>
+                  </div><br>
+
+                  <div>
+                    <label for="duration">Project Duration:</label><br>
+                    <div class="d-flex">
+                      <input id="duration" class="col flex-grow" type="number" min="0">
+                      <select>
+                        <option onclick="unit='day'">Day</option>
+                        <option onclick="unit='month'">Month</option>
+                        <option onclick="unit='year'">Year</option>
+                      </select>
+                    </div>
+                  </div><br>
+
+                  <form id="myForm" class="mb-0" action="/api/createProj" method="post" enctype="multipart/form-data" target="dummyframe">
+                    <div>
+                      <label for="inscope">Project Inscope:</label><br>
+                      <input id="inscope" class="w-100" type="text">
+                    </div><br>
+
+                    <div>
+                      <label for="outscope">Project Outscope:</label><br>
+                      <input id="outscope" class="w-100" type="text">
+                    </div><br>
+
+                    <div>
+                      <label for="vpn">Use OpenVPN File:</label><br>
+                      <input id="vpn" class="w-100" type="file" accept=".ovpn">
+                    </div>
+
+                    <input id="projID" type="text" hidden>
+                  </form>
+                </div>
+              
+                <div class="modal-footer">
+                  <button type="button" class="btn border purple" data-bs-dismiss="modal" onclick="handleFormSubmit()">Create</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="projectList" class="list-group"></div>
+          <iframe name="dummyframe" id="dummyframe" style="display: none;"></iframe>
+        </div>
+      </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+  </body>
+</html>
